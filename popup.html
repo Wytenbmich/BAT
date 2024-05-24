@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Blockchain Address Translator</title>
+  <link rel="stylesheet" type="text/css" href="popup.css">
+</head>
+<body>
+  <div id="main-container">
+    <div class="header">
+      <h1>Blockchain Address Translator</h1>
+      <label class="switch">
+        <input type="checkbox" id="toggleExtension">
+        <span class="slider round"></span>
+      </label>
+    </div>
+    <div class="input-group">
+      <label for="address">Address:</label>
+      <input type="text" id="address" placeholder="0x...">
+    </div>
+    <div class="input-group">
+      <label for="service">Service Name:</label>
+      <input type="text" id="service" placeholder="Service Name">
+    </div>
+    <div class="input-group">
+      <label for="name">Name:</label>
+      <input type="text" id="name" placeholder="Name">
+    </div>
+    <button id="addMapping">Add Mapping</button>
+    <div id="status"></div>
+    <hr>
+    <button id="importMappings">Import CSV</button>
+    <button id="exportMappings">Export CSV</button>
+    <hr>
+    <h2>Custom Mappings</h2>
+    <div id="mappingsList"></div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
