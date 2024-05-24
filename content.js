@@ -18,6 +18,18 @@ function injectStyles() {
   document.head.appendChild(style);
 }
 
+function translateAddressElement(element, addressMap, iconURL) {
+  const regex = /0x[a-fA-F0-9]{40}/g;
+  const matchedAddresses = element.innerHTML.match(regex);
+  if (matchedAddresses) {
+    matchedAddresses.forEach(address => {
+      if (addressMap.has(address) && addressMap.get(address) !== null) {
+        element.innerHTML = element.innerHTML.replace(address, `<div class="address-translation"><img src="${iconURL}" alt="icon" class="address-icon">${addressMap.get(address)}</div>`);
+      }
+    });
+  }
+}
+
 function translateAddresses() {
   chrome.storage.sync.get({ extensionEnabled: true }, data => {
     if (!data.extensionEnabled) return;
@@ -113,6 +125,30 @@ function translateAddresses() {
                 }
               }
             }
+
+            // Observe mutations to translate dynamically added content
+            const observer = new MutationObserver(mutations => {
+              mutations.forEach(mutation => {
+                mutation.addedNodes.forEach(node => {
+                  if (node.nodeType === 1) { // Only element nodes
+                    const innerElements = node.getElementsByTagName("*");
+                    for (let innerElement of innerElements) {
+                      if (innerElement.children.length === 0) { // Skip elements with children
+                        translateAddressElement(innerElement, addressMap, iconURL);
+                      }
+                    }
+                    if (node.children.length === 0) { // Also check the node itself
+                      translateAddressElement(node, addressMap, iconURL);
+                    }
+                  }
+                });
+              });
+            });
+
+            observer.observe(document.body, {
+              childList: true,
+              subtree: true
+            });
           }
         }
       );
