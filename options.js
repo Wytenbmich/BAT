@@ -206,3 +206,18 @@ function openTab(evt, tabName) {
   document.getElementById(tabName).style.display = "block";
   evt.currentTarget.className += " active";
 }
+document.getElementById('clearAllMappings').addEventListener('click', () => {
+  chrome.storage.sync.get({ customMappings: {} }, data => {
+    const customMappings = data.customMappings;
+    if (Object.keys(customMappings).length === 0) {
+      document.getElementById('status').textContent = 'No mappings to clear!';
+      setTimeout(() => { document.getElementById('status').textContent = ''; }, 2000);
+    } else {
+      chrome.storage.sync.set({ customMappings: {} }, () => {
+        document.getElementById('status').textContent = 'All mappings cleared!';
+        setTimeout(() => { document.getElementById('status').textContent = ''; }, 2000);
+        displayMappings(); // Refresh the list
+      });
+    }
+  });
+});

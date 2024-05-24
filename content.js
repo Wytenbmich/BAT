@@ -1,10 +1,22 @@
 let originalTexts = new Map();
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "revertChanges") {
-    revertChanges();
-  }
-});
+function injectStyles() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .address-translation {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .address-icon {
+      margin-right: 5px;
+      vertical-align: middle;
+      width: 16px;
+      height: 16px;
+    }
+  `;
+  document.head.appendChild(style);
+}
 
 function translateAddresses() {
   chrome.storage.sync.get({ extensionEnabled: true }, data => {
@@ -44,7 +56,6 @@ function translateAddresses() {
           if (response.contractData) {
             const addressMap = new Map(Array.from(addresses).map((address, index) => [address, response.contractData[index]]));
             const iconURL = chrome.runtime.getURL("icons/icon16.png");
-
             const socialIcons = {
               homepage: 'icons/homepage.png',
               github: 'icons/github.png',
@@ -116,4 +127,11 @@ function revertChanges() {
   originalTexts.clear();
 }
 
+injectStyles();
 translateAddresses();
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "revertChanges") {
+    revertChanges();
+  }
+});
