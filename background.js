@@ -9,14 +9,14 @@ function fetchFromAPI(addresses, callback) {
 
 // Listen for messages from the content script
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "fetchServiceName") {
+  if (message.action === "fetchContractData") {
     const addresses = message.addresses.map(addr => addr.toLowerCase());
     chrome.storage.sync.get({ customMappings: {} }, data => {
       const customMappings = data.customMappings;
       const addressesToFetch = [];
-      const serviceNames = addresses.map(address => {
+      const contractData = addresses.map(address => {
         if (customMappings[address]) {
-          return customMappings[address];
+          return { name: customMappings[address] };
         } else {
           addressesToFetch.push(address);
           return null; // Placeholder for API fetch
@@ -31,15 +31,23 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               const service = apiData[address].service || '';
               const name = apiData[address].name || '';
               const formattedName = service && name ? `${service}: ${name}` : service || name || null;
-              serviceNames[index] = formattedName;
+              contractData[index] = {
+                name: formattedName,
+                usd_price: apiData[address]?.usd_price,
+                homepage: apiData[address]?.homepage,
+                github: apiData[address]?.github,
+                discord: apiData[address]?.discord,
+                twitter: apiData[address]?.twitter,
+                telegram: apiData[address]?.telegram
+              };
             } else {
-              serviceNames[index] = null;
+              contractData[index] = null;
             }
           });
-          sendResponse({ serviceNames: serviceNames });
+          sendResponse({ contractData: contractData });
         });
       } else {
-        sendResponse({ serviceNames: serviceNames });
+        sendResponse({ contractData: contractData });
       }
     });
     return true; // Keeps the message channel open for sendResponse
