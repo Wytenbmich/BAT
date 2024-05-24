@@ -58,7 +58,7 @@ function translateAddresses() {
             };
 
             const iconAndPopup = (originalAddress, contractData) => {
-              const price = contractData?.price ? ` ${contractData.price}` : '';
+              const price = contractData?.usd_price ? ` $${parseFloat(contractData.usd_price) >= 1 ? parseFloat(contractData.usd_price).toFixed(2) : parseFloat(contractData.usd_price).toPrecision(3)}<br/>` : '';
 
               let socialLinks = '';
 
@@ -72,7 +72,8 @@ function translateAddresses() {
                 <div class="bat-popup" style="display: inline;">
                   <img src="${iconURL}" alt="icon" style="vertical-align: middle; margin-right: 5px;">
                   <span class="popuptext">
-                    ${contractData.name}${price}<br/>
+                    ${contractData.name}<br/>
+                    ${price}
                     <span class="contract-address" data-no-translate>${shortenAddress(originalAddress)}<img src="${chrome.runtime.getURL('icons/copy.png')}" alt="copy" style="vertical-align: middle; margin-left: 5px; cursor: pointer;" onclick="navigator.clipboard.writeText('${originalAddress}')"></span><br/>
                     ${socialLinks}
                   </span>

@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               const formattedName = service && name ? `${service}: ${name}` : service || name || null;
               contractData[index] = {
                 name: formattedName,
-                price: apiData[address]?.price,
+                usd_price: apiData[address]?.usd_price,
                 homepage: apiData[address]?.homepage,
                 github: apiData[address]?.github,
                 discord: apiData[address]?.discord,
