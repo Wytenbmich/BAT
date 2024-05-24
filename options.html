@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage Custom Mappings</title>
+  <link rel="stylesheet" type="text/css" href="options.css">
+</head>
+<body>
+  <div id="main-container">
+    <h1>Manage Custom Mappings</h1>
+    <div class="tabs">
+      <button class="tablink active" data-tab="AddressBook">Address Book</button>
+      <button class="tablink" data-tab="ImportExport">Import from Text/Export to Text</button>
+    </div>
+    <div id="AddressBook" class="tabcontent">
+      <div class="input-group">
+        <label for="address">Address:</label>
+        <input type="text" id="address" placeholder="0x...">
+      </div>
+      <div class="input-group">
+        <label for="service">Service Name:</label>
+        <input type="text" id="service" placeholder="Service Name">
+      </div>
+      <div class="input-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" placeholder="Name">
+      </div>
+      <button id="addMapping">Add Mapping</button>
+      <div id="status"></div>
+      <hr>
+      <h2>Custom Mappings</h2>
+      <div id="mappingsList"></div>
+    </div>
+    <div id="ImportExport" class="tabcontent">
+      <textarea id="csvTextarea" placeholder="Address,Service Name,Name &#10;0x1234...5678,PancakeSwap,LP-CAKE-BNB" rows="10"></textarea>
+      <button id="importCSV">Import from Text</button>
+      <button id="exportCSV">Export to Text</button>
+    </div>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>
