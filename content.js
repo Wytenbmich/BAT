@@ -18,7 +18,7 @@ function translateAddresses() {
     elementsWithTarget.forEach(element => {
       const fullAddress = element.getAttribute("data-highlight-target");
       if (fullAddress.match(regex)) {
-        addresses.add(fullAddress);
+        addresses.add(fullAddress.toLowerCase());
         originalTexts.set(element, element.innerHTML); // Save original text
       }
     });
@@ -83,7 +83,7 @@ function translateAddresses() {
             // Update the elements with service names
             elementsWithTarget.forEach(element => {
               const fullAddress = element.getAttribute("data-highlight-target");
-              const contractData = addressMap.get(fullAddress);
+              const contractData = addressMap.get(fullAddress.toLowerCase());
               if (contractData) {
                 element.innerHTML = iconAndPopup(fullAddress, contractData) + contractData.name;
               }
@@ -94,7 +94,7 @@ function translateAddresses() {
                 const matchedAddresses = element.innerHTML.match(regex);
                 if (matchedAddresses) {
                   matchedAddresses.forEach(address => {
-                    const contractData = addressMap.get(address);
+                    const contractData = addressMap.get(address.toLowerCase());
                     if (contractData) {
                       element.innerHTML = element.innerHTML.replace(address, iconAndPopup(address, contractData) + element.innerHTML.replace(address, contractData.name));
                     }
