@@ -1,24 +1,18 @@
 body {
   font-family: 'Roboto', sans-serif;
-  padding: 0;
+  padding: 0px;
   background-color: #292A34;
   color: #e0e0e0;
-  width: 300px;
-  box-sizing: border-box;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  font-size: 12px;
 }
 
 #main-container {
   background-color: #292A34;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  padding: 20px;
+  padding: 10px;
   box-sizing: border-box;
-  width: 100%;
+  width: 300px;
 }
 
 .header {
@@ -28,7 +22,7 @@ body {
   margin-bottom: 20px;
 }
 
-h1, h2 {
+h1 {
   font-size: 18px;
   color: #ffffff;
   margin: 0;
@@ -80,12 +74,8 @@ button:hover {
   text-align: center;
 }
 
-.mapping-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid #444;
+hr {
+  border: 1px solid #444;
 }
 
 .mapping-item div {
@@ -147,4 +137,17 @@ input:checked + .slider {
 
 input:checked + .slider:before {
   transform: translateX(14px);
+}
+
+.manage-link {
+  display: block;
+  text-align: center;
+  color: #ffffff;
+  text-decoration: none;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.manage-link:hover {
+  text-decoration: underline;
 }

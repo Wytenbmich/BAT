@@ -44,8 +44,8 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         });
         chrome.storage.sync.set({ customMappings: customMappings }, () => {
-          document.getElementById('status').textContent = 'Mappings imported!';
-          setTimeout(() => { document.getElementById('status').textContent = ''; }, 2000);
+          document.getElementById('importExportStatus').textContent = 'Mappings imported from text!';
+          setTimeout(() => { document.getElementById('importExportStatus').textContent = ''; }, 2000);
           displayMappings(); // Refresh the list
         });
       });
@@ -63,6 +63,62 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
       document.getElementById('csvTextarea').value = csvContent;
+      document.getElementById('importExportStatus').textContent = 'Mappings exported to text!';
+      setTimeout(() => { document.getElementById('importExportStatus').textContent = ''; }, 2000);
+    });
+  });
+
+  document.getElementById('importFromFile').addEventListener('click', () => {
+    const fileInput = document.getElementById('importFile');
+    fileInput.click();
+  });
+
+  document.getElementById('importFile').addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const csvText = event.target.result;
+        const lines = csvText.split('\n');
+        chrome.storage.sync.get({ customMappings: {} }, data => {
+          const customMappings = data.customMappings;
+          lines.forEach(line => {
+            const [address, service, name] = line.split(',');
+            if (address && (service || name)) {
+              const formattedName = service && name ? `${service.trim()}: ${name.trim()}` : service.trim() || name.trim();
+              customMappings[address.trim().toLowerCase()] = formattedName;
+            }
+          });
+          chrome.storage.sync.set({ customMappings: customMappings }, () => {
+            document.getElementById('fileOperationStatus').textContent = 'Mappings imported from file!';
+            setTimeout(() => { document.getElementById('fileOperationStatus').textContent = ''; }, 2000);
+            displayMappings(); // Refresh the list
+          });
+        });
+      };
+      reader.readAsText(file);
+    }
+  });
+
+  document.getElementById('exportToFile').addEventListener('click', () => {
+    chrome.storage.sync.get({ customMappings: {} }, data => {
+      const customMappings = data.customMappings;
+      let csvContent = '';
+      for (const address in customMappings) {
+        if (customMappings.hasOwnProperty(address)) {
+          const [service, name] = customMappings[address].split(': ');
+          csvContent += `${address},${service || ''},${name || ''}\n`;
+        }
+      }
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'custom_mappings.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+      document.getElementById('fileOperationStatus').textContent = 'Mappings exported to file!';
+      setTimeout(() => { document.getElementById('fileOperationStatus').textContent = ''; }, 2000);
     });
   });
 
