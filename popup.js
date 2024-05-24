@@ -91,61 +91,6 @@ document.getElementById('addMapping').addEventListener('click', () => {
   }
 });
 
-document.getElementById('importMappings').addEventListener('click', () => {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.csv';
-  input.onchange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      if (confirm('Are you sure you want to import this CSV file? This will add new mappings to your current list.')) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          const csvData = event.target.result;
-          const lines = csvData.split('\n');
-          chrome.storage.sync.get({ customMappings: {} }, data => {
-            const customMappings = data.customMappings;
-            lines.forEach(line => {
-              const [address, service, name] = line.split(',');
-              if (address && (service || name)) {
-                const formattedName = service && name ? `${service.trim()}: ${name.trim()}` : service.trim() || name.trim();
-                customMappings[address.trim().toLowerCase()] = formattedName;
-              }
-            });
-            chrome.storage.sync.set({ customMappings: customMappings }, () => {
-              document.getElementById('status').textContent = 'Mappings imported!';
-              setTimeout(() => { document.getElementById('status').textContent = ''; }, 2000);
-              displayMappings(); // Refresh the list
-            });
-          });
-        };
-        reader.readAsText(file);
-      }
-    }
-  };
-  input.click();
-});
-
-document.getElementById('exportMappings').addEventListener('click', () => {
-  chrome.storage.sync.get({ customMappings: {} }, data => {
-    const customMappings = data.customMappings;
-    let csvContent = "data:text/csv;charset=utf-8,";
-    for (const address in customMappings) {
-      if (customMappings.hasOwnProperty(address)) {
-        const [service, name] = customMappings[address].split(': ');
-        csvContent += `${address},${service || ''},${name || ''}\n`;
-      }
-    }
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "custom_mappings.csv");
-    document.body.appendChild(link); // Required for FF
-    link.click();
-    document.body.removeChild(link);
-  });
-});
-
 document.getElementById('toggleExtension').addEventListener('change', event => {
   const enabled = event.target.checked;
   chrome.storage.sync.set({ extensionEnabled: enabled }, () => {

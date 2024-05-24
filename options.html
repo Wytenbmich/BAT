@@ -10,6 +10,7 @@
     <div class="tabs">
       <button class="tablink active" data-tab="AddressBook">Address Book</button>
       <button class="tablink" data-tab="ImportExport">Import from Text/Export to Text</button>
+      <button class="tablink" data-tab="FileOperations">Import from File/Export to File</button>
     </div>
     <div id="AddressBook" class="tabcontent">
       <div class="input-group">
@@ -31,9 +32,16 @@
       <div id="mappingsList"></div>
     </div>
     <div id="ImportExport" class="tabcontent">
-      <textarea id="csvTextarea" placeholder="Address,Service Name,Name &#10;0x1234...5678,PancakeSwap,LP-CAKE-BNB" rows="10"></textarea>
+      <textarea id="csvTextarea" placeholder="0xAddress,Service Name,Name\n0x1234567890abcdef1234567890abcdef12345678,Example Service,Example Name" rows="10"></textarea>
       <button id="importCSV">Import from Text</button>
       <button id="exportCSV">Export to Text</button>
+      <div id="importExportStatus"></div>
+    </div>
+    <div id="FileOperations" class="tabcontent">
+      <input type="file" id="importFile" accept=".csv" style="display: none;">
+      <button id="importFromFile">Import from File</button>
+      <button id="exportToFile">Export to File</button>
+      <div id="fileOperationStatus"></div>
     </div>
   </div>
   <script src="options.js"></script>
