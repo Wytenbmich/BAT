@@ -43,11 +43,13 @@ function translateAddresses() {
         response => {
           if (response.serviceNames) {
             const addressMap = new Map(Array.from(addresses).map((address, index) => [address, response.serviceNames[index]]));
+            const iconURL = chrome.runtime.getURL("icons/icon16.png");
+            const iconImg = `<img src="${iconURL}" alt="icon" style="vertical-align: middle; margin-right: 5px;">`;
             // Update the elements with service names
             elementsWithTarget.forEach(element => {
               const fullAddress = element.getAttribute("data-highlight-target");
               if (addressMap.has(fullAddress) && addressMap.get(fullAddress) !== null) {
-                element.innerHTML = addressMap.get(fullAddress);
+                element.innerHTML = iconImg + addressMap.get(fullAddress);
               }
             });
             for (let element of elements) {
@@ -56,7 +58,7 @@ function translateAddresses() {
                 if (matchedAddresses) {
                   matchedAddresses.forEach(address => {
                     if (addressMap.has(address) && addressMap.get(address) !== null) {
-                      element.innerHTML = element.innerHTML.replace(address, addressMap.get(address));
+                      element.innerHTML = element.innerHTML.replace(address, iconImg + addressMap.get(address));
                     }
                   });
                 }

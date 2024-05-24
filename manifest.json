@@ -6,9 +6,7 @@
   "permissions": [
     "storage",
     "activeTab",
-    "http://localhost:3008/",
-    "https://*/",
-    "http://*/"
+    "http://localhost:3008/"
   ],
   "background": {
     "scripts": ["background.js"],
@@ -32,5 +30,6 @@
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  }
+  },
+    "web_accessible_resources": ["/icons/*.png"]
 }
