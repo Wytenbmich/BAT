@@ -1,10 +1,34 @@
 let originalTexts = new Map();
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "revertChanges") {
-    revertChanges();
+function injectStyles() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .address-translation {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .address-icon {
+      margin-right: 5px;
+      vertical-align: middle;
+      width: 16px;
+      height: 16px;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function translateAddressElement(element, addressMap, iconURL) {
+  const regex = /0x[a-fA-F0-9]{40}/g;
+  const matchedAddresses = element.innerHTML.match(regex);
+  if (matchedAddresses) {
+    matchedAddresses.forEach(address => {
+      if (addressMap.has(address) && addressMap.get(address) !== null) {
+        element.innerHTML = element.innerHTML.replace(address, `<div class="address-translation"><img src="${iconURL}" alt="icon" class="address-icon">${addressMap.get(address)}</div>`);
+      }
+    });
   }
-});
+}
 
 function translateAddresses() {
   chrome.storage.sync.get({ extensionEnabled: true }, data => {
@@ -44,7 +68,6 @@ function translateAddresses() {
           if (response.contractData) {
             const addressMap = new Map(Array.from(addresses).map((address, index) => [address, response.contractData[index]]));
             const iconURL = chrome.runtime.getURL("icons/icon16.png");
-
             const socialIcons = {
               homepage: 'icons/homepage.png',
               github: 'icons/github.png',
@@ -102,6 +125,30 @@ function translateAddresses() {
                 }
               }
             }
+
+            // Observe mutations to translate dynamically added content
+            const observer = new MutationObserver(mutations => {
+              mutations.forEach(mutation => {
+                mutation.addedNodes.forEach(node => {
+                  if (node.nodeType === 1) { // Only element nodes
+                    const innerElements = node.getElementsByTagName("*");
+                    for (let innerElement of innerElements) {
+                      if (innerElement.children.length === 0) { // Skip elements with children
+                        translateAddressElement(innerElement, addressMap, iconURL);
+                      }
+                    }
+                    if (node.children.length === 0) { // Also check the node itself
+                      translateAddressElement(node, addressMap, iconURL);
+                    }
+                  }
+                });
+              });
+            });
+
+            observer.observe(document.body, {
+              childList: true,
+              subtree: true
+            });
           }
         }
       );
@@ -116,4 +163,11 @@ function revertChanges() {
   originalTexts.clear();
 }
 
+injectStyles();
 translateAddresses();
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "revertChanges") {
+    revertChanges();
+  }
+});
